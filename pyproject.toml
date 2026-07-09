@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling", "climplicit"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ddueruem"
+version = "0.9.0"
+description = "Wraps feature-model analysis tools into a unified framework and cli."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+  "climplicit",
+  "cloudpickle",
+  "python-sat",
+  "rich",
+  "termcolor",
+  "uvllang"
+]
+
+[tool.hatch.build.targets.wheel]
+sources = ["plugins"]
+packages = [
+  "plugins/bdd",
+  "plugins/counting",
+  "plugins/formats",
+  "plugins/frameworks",
+  "plugins/preprocessing",
+  "plugins/svo",
+  "plugins/tsampling",
+  "plugins/usampling",
+  "util"
+]
+
+[tool.hatch.build.targets.wheel.force-include]
+"config.py" = "config.py"
+
+[tool.hatch.metadata.hooks.climplicit]
+where = "plugins"
+
+[project.scripts]
+bdd = "bdd.compilers.compiler:BDD_Compiler.main"
+usample = "usampling.usampler:USampler.main"
+tsample = "tsampling.tsampler:TSampler.main"
+ddueruem = "util.ddueruem:DDUERUEM.main"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
