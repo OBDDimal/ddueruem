@@ -89,6 +89,7 @@ class ReadBDD:
         self.nvars = nvars
         self.order = order
 
+
     def verify(self, config):
 
         node_id = self.roots[0]

@@ -18,7 +18,7 @@ from util.cli import cli, formatting
 from util.plugins import Executable
 
 
-@tool("ddueruem", desc="Wraps raw tools but ensures dependencies etc")
+@tool("ddueruem", desc="Wraps raw tools but ensures dependencies etc.")
 class DDUERUEM:
 
     @classmethod
@@ -67,7 +67,7 @@ class DDUERUEM:
         pass
 
     @classmethod
-    @command()
+    @command(hides = ["help"])
     def run(cls, stub, *args):
 
         tool = cls._find_tool(stub)
