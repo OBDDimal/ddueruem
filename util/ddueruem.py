@@ -31,6 +31,7 @@ class DDUERUEM:
         stub2plugin.update(preprocessing.get_plugins_dict())
         stub2plugin.update(frameworks.get_plugins_dict())
 
+
         if tool := stub2plugin.get(stub.strip().lower()):
             return tool
         else:
@@ -68,6 +69,7 @@ class DDUERUEM:
     def run(cls, stub, *args):
 
         tool = cls._find_tool(stub)
+
         if tool and issubclass(tool, Executable):
 
             if not tool.check():
