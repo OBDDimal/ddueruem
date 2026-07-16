@@ -68,6 +68,7 @@ class DDUERUEM:
     def run(cls, stub, *args):
 
         tool = cls._find_tool(stub)
+
         if tool and issubclass(tool, Executable):
 
             if not tool.check():
