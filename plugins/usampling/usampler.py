@@ -82,6 +82,9 @@ class USampler(ABC, Extendable):
     ):
         """meta function for uniform sampling"""
 
+        if not cls.check():
+            raise Exception(f'{cls.__name__} is not installed, aborting.')
+
         if payload is None:
             payload = {}
 

@@ -4,7 +4,7 @@ To install tool:
 > ddueruem install <tool>
 
 To run tool:
-> ddueruem run tool -- --help"""
+> ddueruem run tool --help"""
 
 import frameworks
 import preprocessing
@@ -18,7 +18,7 @@ from util.cli import cli, formatting
 from util.plugins import Executable
 
 
-@tool("ddueruem", desc="Wraps raw tools but ensures dependencies etc")
+@tool("ddueruem", desc="Wraps raw tools but ensures dependencies etc.")
 class DDUERUEM:
 
     @classmethod
@@ -30,9 +30,6 @@ class DDUERUEM:
         stub2plugin.update(BDD_Compiler.get_plugins_dict())
         stub2plugin.update(preprocessing.get_plugins_dict())
         stub2plugin.update(frameworks.get_plugins_dict())
-
-        # print(stub2plugin)
-        # print(stub2plugin.get(stub.strip().lower()))
 
         if tool := stub2plugin.get(stub.strip().lower()):
             return tool
@@ -67,11 +64,15 @@ class DDUERUEM:
         pass
 
     @classmethod
-    @command()
+    @command(hides = ["help"])
     def run(cls, stub, *args):
 
         tool = cls._find_tool(stub)
         if tool and issubclass(tool, Executable):
+
+            if not tool.check():
+                cli.warn(formatting.h(stub), "is not installed.")
+                return
 
             args = " ".join(args)
             tool.plain(args)

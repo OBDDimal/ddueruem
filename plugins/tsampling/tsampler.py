@@ -78,6 +78,9 @@ class TSampler(ABC, Extendable):
         **kwargs,
     ):
 
+        if not cls.check():
+            raise Exception(f'{cls.__name__} is not installed, aborting.')
+
         sample = None
         try:
             with NamedTemporaryFile() as file_temp:

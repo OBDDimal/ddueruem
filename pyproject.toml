@@ -34,8 +34,6 @@ packages = [
 [tool.hatch.build.targets.wheel.force-include]
 "config.py" = "config.py"
 
-[tool.hatch.metadata.hooks.climplicit]
-where = "plugins"
 
 [project.scripts]
 bdd = "bdd.compilers.compiler:BDD_Compiler.main"
