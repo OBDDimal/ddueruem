@@ -102,6 +102,9 @@ class BDD_Compiler(ABC, Extendable):
     ):
         """meta function for BDD compilation"""
 
+        if not cls.check():
+            raise Exception(f"{cls.__name__} is not installed, aborting")
+
         if soft and cls.supports_soft_timeout():
             if timeout:
                 soft, timeout = timeout, None
