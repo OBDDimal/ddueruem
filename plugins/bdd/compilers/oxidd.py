@@ -8,7 +8,7 @@ from frameworks import Dimagic
 
 import config as CONFIG
 from util.cli import cli
-from util.plugins import Install, Installable, ToolDependency
+from util.plugins import Executable, Install, Installable, ToolDependency
 from util.runner import via_subprocess
 
 from .compiler import BDD_Compiler
@@ -17,7 +17,13 @@ STUB = "oxidd"
 EXE_NAME = "oxidd-cli"
 
 
-class OxiDD(BDD_Compiler, Installable):
+class OxiDD(BDD_Compiler, Installable, Executable):
+
+    @classmethod
+    def plain(cls, args):
+
+        exe_path = path.join(CONFIG.TOOLS_DIR, STUB, EXE_NAME)
+        via_subprocess(f"{exe_path} {args}", rc = None, debug = True)
 
     @classmethod
     def format_dddmp(cls, file):

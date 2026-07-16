@@ -8,13 +8,10 @@ import config as CONFIG
 
 from util.runner import via_subprocess
 
-from util.cli import cli
 from .compiler import BDD_Compiler
 
 from climplicit import command
 from formats import CNF
-
-from . import CUDD
 
 
 dvo2name = {
@@ -44,8 +41,7 @@ class Logic2BDD(BDD_Compiler, Installable, Executable):
         values={"dvo": lambda: list(dvo2name.keys())},
         ignores=["file_in", "file_out", "order"],
     )
-    def _compile(cls, file_in, file_out = None, order = None, use_xor = False, dvo = "win3c", **kwargs):
-
+    def _compile(cls, file_in, file_out = None, order = None, use_xor = False, dvo = "win3c", complement_edges = False, **kwargs):
 
         if dvo != "off":
             dvo = f"-reorder-method {dvo2name.get(dvo.lower())}"
@@ -84,7 +80,9 @@ class Logic2BDD(BDD_Compiler, Installable, Executable):
             call = via_subprocess(f'{logic2bdd} -line-length 70 -min-nodes 100000 -constraint-reorder minspan -base {filepath} -cudd {dvo} -no-static-comp {varfile} {expfile}', env=dict(LD_LIBRARY_PATH=path.dirname(lib)))
             call.add_time("time_pre", call_splot2model.get_time_total())
 
-            with open(path.join(workpath, f'{fileprefix}.xml.dddmp')) as fp:
+            file_tmp = path.join(workpath, f'{fileprefix}.xml.dddmp')
+
+            with open(file_tmp) as fp:
                 raw = fp.read()
                 m = re.search(r"[.]nnodes\s+(?P<size>\d+)", raw)
 

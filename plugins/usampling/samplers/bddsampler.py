@@ -84,7 +84,7 @@ class BDDSampler(USampler, Installable, Executable):
                     best=True,
                 )
 
-                kc_time = out.time_total
+                kc_time = out.meta["times"]["time_kc"]
 
                 if not out.success:
                     if out.timeouted:
