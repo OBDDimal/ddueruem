@@ -31,7 +31,6 @@ class DDUERUEM:
         stub2plugin.update(preprocessing.get_plugins_dict())
         stub2plugin.update(frameworks.get_plugins_dict())
 
-
         if tool := stub2plugin.get(stub.strip().lower()):
             return tool
         else:
@@ -59,7 +58,7 @@ class DDUERUEM:
                 )
             else:
                 cli.error(
-                    formatting.check(), formatting.h(stub), "Installation failed!"
+                    f"Installation for {formatting.h(stub)} failed!"
                 )
 
         pass
