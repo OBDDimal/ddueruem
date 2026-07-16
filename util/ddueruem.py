@@ -58,7 +58,7 @@ class DDUERUEM:
                 )
             else:
                 cli.error(
-                    formatting.check(), formatting.h(stub), "Installation failed!"
+                    f"Installation for {formatting.h(stub)} failed!"
                 )
 
         pass

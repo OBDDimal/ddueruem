@@ -131,7 +131,7 @@ class CLI:
         if isinstance(parts, str):
             out = formatting.warn(parts)
         else:
-            out = [str(formatting.bold("E"))]
+            out = [str(formatting.bold("E:"))]
             out.extend([str(part) for part in parts])
             out = formatting.warn(sep.join(out))
 
