@@ -22,7 +22,7 @@ REP_COUNT = re.compile(r"(?P<count>\d+)")
 REP_COUNT_FEATURES = re.compile(r"(?P<feature>\d+),(?P<count>\d+)")
 
 
-class DDNNIFE_base(Installable, Executable):
+class DDNNIFE(Installable, Executable):
 
     @classmethod
     def plain(cls, args):

@@ -1,4 +1,4 @@
-from .ddnnife import DDNNIFE_base
+from .ddnnife import DDNNIFE
 from .dimagic import Dimagic
 from .divkc import DivKC
 from .featjar import FeatJar
