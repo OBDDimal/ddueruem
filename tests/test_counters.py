@@ -1,5 +1,4 @@
 import pytest
-
 from counting import Counter
 
 

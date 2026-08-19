@@ -1,7 +1,7 @@
-import pytest
-
-from bdd import BDD, BDD_Compiler
 from tempfile import NamedTemporaryFile
+
+import pytest
+from bdd import BDD, BDD_Compiler
 
 
 @pytest.mark.parametrize("compiler", BDD_Compiler.get_plugins())

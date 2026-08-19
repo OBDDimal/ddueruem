@@ -1,15 +1,12 @@
-import pytest
-
-from counting import Counter
-from formats import CNF
-
-from frameworks import DDNNIFE_base as DDNNIFE
-from frameworks import FeatJar
+from tempfile import NamedTemporaryFile
 
 import preprocessing
-from preprocessing import Arjun, PMC
-
-from tempfile import NamedTemporaryFile
+import pytest
+from counting import Counter
+from formats import CNF
+from frameworks import DDNNIFE_base as DDNNIFE
+from frameworks import FeatJar
+from preprocessing import PMC, Arjun
 
 
 @pytest.mark.parametrize(

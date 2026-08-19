@@ -1,14 +1,11 @@
-import pytest
-
-from bdd import BDD
-from bdd.compilers import CUDD
-
-from formats import CNF
+from tempfile import NamedTemporaryFile
 
 import preprocessing
+import pytest
+from bdd import BDD
+from bdd.compilers import CUDD
+from formats import CNF
 from svo.heuristics import Force, ForceXG
-
-from tempfile import NamedTemporaryFile
 
 
 def test_cudd_install():

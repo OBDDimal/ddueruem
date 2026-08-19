@@ -1,17 +1,13 @@
-import pytest
 import logging
-
-from tsampling import TSampler
-from pysat.solvers import Solver
-
-from tsampling.samplers import YASA
-
-from formats import CNF
-
-from bdd import BDD
-from bdd.compilers import OxiDD, CUDD
-
 from tempfile import NamedTemporaryFile
+
+import pytest
+from bdd import BDD
+from bdd.compilers import CUDD, OxiDD
+from formats import CNF
+from pysat.solvers import Solver
+from tsampling import TSampler
+from tsampling.samplers import YASA
 
 log = logging.getLogger(__name__)
 
