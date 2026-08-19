@@ -8,6 +8,8 @@ To run tool:
 
 import frameworks
 import preprocessing
+import misc
+
 from bdd import BDD_Compiler
 from climplicit import command, tool
 from svo import SVO
@@ -30,6 +32,7 @@ class DDUERUEM:
         stub2plugin.update(BDD_Compiler.get_plugins_dict())
         stub2plugin.update(preprocessing.get_plugins_dict())
         stub2plugin.update(frameworks.get_plugins_dict())
+        stub2plugin.update(misc.get_plugins_dict())
 
         if tool := stub2plugin.get(stub.strip().lower()):
             return tool
@@ -41,6 +44,9 @@ class DDUERUEM:
     def install(cls, stub):
 
         tool = cls._find_tool(stub)
+
+        if tool is None:
+            return
 
         if tool.check():
             cli.say(
@@ -61,7 +67,6 @@ class DDUERUEM:
                     f"Installation for {formatting.h(stub)} failed!"
                 )
 
-        pass
 
     @classmethod
     @command(hides = ["help"])

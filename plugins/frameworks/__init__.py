@@ -1,8 +1,9 @@
-from .ddnnife import DDNNIFE_base
+from .d4 import D4
+from .ddnnife import DDNNIFE
 from .dimagic import Dimagic
 from .divkc import DivKC
 from .featjar import FeatJar
 
 
 def get_plugins_dict():
-    return dict(featjar=FeatJar, dimagic=Dimagic, divkc=DivKC)
+    return dict(d4 = D4, featjar=FeatJar, dimagic=Dimagic, divkc=DivKC)

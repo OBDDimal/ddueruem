@@ -2,8 +2,9 @@
 
 from .bddsampler import BDDSampler
 from .cmsgen import CMSGen
-from .ddnnife import DDNNIFE
 from .dddsampler import DDDSampler
+from .ddnnife import DDNNIFE
+from .decdnnf_rs import Decdnnf_rs
 from .divkc import DivKC
 from .kus import KUS
 from .quicksampler import Quicksampler
