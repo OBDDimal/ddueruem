@@ -26,7 +26,11 @@ class OxiDD(BDD_Compiler, Installable, Executable):
         via_subprocess(f"{exe_path} {args}", rc = None, debug = True)
 
     @classmethod
-    def format_dddmp(cls, file):
+    def format_dddmp(cls, file, dddmp_auxid = False):
+
+        if not dddmp_auxid:
+            return
+
         """Reintroduce auxid for compatibility to BDDSampler / CUDD"""
         with open(file) as fp:
             lines = fp.readlines()

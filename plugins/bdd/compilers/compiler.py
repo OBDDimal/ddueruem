@@ -35,6 +35,7 @@ class BDD_Compiler(ABC, Extendable):
             "best": "Use compiler-specific pre, svo and build configuration",
             "svo": "Static Variable Ordering to perform",
             "timeout": "Timeout in s",
+            "dddmp_auxid": "Add the auxid column to the dddmp",
             "quiet": "Silences all terminal output",
             "verbose": "Prints result to the command line",
         },
@@ -48,6 +49,7 @@ class BDD_Compiler(ABC, Extendable):
         best=False,
         svo=None,
         timeout: int = None,
+        dddmp_auxid = False, 
         quiet=False,
         verbose=False,
         **kwargs,
@@ -78,6 +80,7 @@ class BDD_Compiler(ABC, Extendable):
             order=order,
             best=best,
             timeout=timeout,
+            dddmp_auxid = dddmp_auxid,
             **kwargs,
         )
 
@@ -98,6 +101,7 @@ class BDD_Compiler(ABC, Extendable):
         best=False,
         timeout=None,
         soft=False,
+        dddmp_auxid = False,
         **kwargs,
     ):
         """meta function for BDD compilation"""
@@ -146,7 +150,7 @@ class BDD_Compiler(ABC, Extendable):
                 )
 
             if file_out:
-                cls.format_dddmp(file_out)
+                cls.format_dddmp(file_out, dddmp_auxid)
 
             time_pre, time_kc, time_export, size = cls.extract_meta(call, file_out)
 
