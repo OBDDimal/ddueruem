@@ -1,26 +1,23 @@
-from util.plugins import Installable, Install, Executable, ToolDependency
+import re
+import shutil
+from os import makedirs, path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
-from os import path, makedirs
+from frameworks import D4
 
 import config as CONFIG
-
-from ..usampler import USampler
-
-from tempfile import TemporaryDirectory, NamedTemporaryFile
-
+from util.plugins import Executable, Install, Installable, ToolDependency
 from util.runner import via_subprocess
 
-import shutil
-
-from frameworks import DDNNIFE
-import re
+from ..usampler import USampler
 
 STUB = "decdnnf_rs"
 EXE_NAME = "decdnnf_rs"
 
+# Paper: https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.SAT.2026.38
+# https://github.com/crillab/decdnnf_rs
 
 class Decdnnf_rs(USampler, Installable, Executable):
-
 
     @classmethod
     def plain(cls, args):
@@ -31,13 +28,15 @@ class Decdnnf_rs(USampler, Installable, Executable):
     @classmethod
     def _sample_uniform(cls, file_in, file_out, size=1024, seed=None, **kwargs):
         """
-        Computes a sample with Spur via subprocess \
+        Computes a sample with decdnnf_rs via subprocess \
         - intended to be called with USampler.sample
+
+        runs CNF -> d-dnnf compilation with D4
         """
 
         with NamedTemporaryFile(suffix=".nnf") as ntf:
             if file_in and not file_in.endswith(".nnf"):
-                call1 = DDNNIFE.cnf2ddnnf(file_in, file_nnf=ntf.name, **kwargs)
+                call1 = D4.cnf2ddnnf(file_in, file_nnf=ntf.name, **kwargs)
                 file_tmp = ntf.name
             else:
                 call1 = None

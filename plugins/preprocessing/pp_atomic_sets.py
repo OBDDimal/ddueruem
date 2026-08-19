@@ -87,7 +87,7 @@ def compute_atomic_sets(cnf, yield_core_dead=False, crossover=False):
         return atomic_sets
 
 
-def simplify_atomic_sets(cnf, yield_core_dead=False, crossover=True):
+def simplify_atomic_sets(cnf, yield_core_dead=False, yield_old2new = False, crossover=True):
 
     atomic_sets, cores, deads = compute_atomic_sets(
         cnf, yield_core_dead=True, crossover=crossover
@@ -203,7 +203,15 @@ def simplify_atomic_sets(cnf, yield_core_dead=False, crossover=True):
 
     cnf2 = CNF(from_clauses=clauses_new, nv=current - 1, comments=comments)
 
+    returner = (cnf2,)
+
     if yield_core_dead:
-        return cnf2, cores, deads
-    else:
-        return cnf2
+        returner += (cores, deads)
+
+    if yield_old2new:
+        returner += (old2new, )
+
+    if len(returner) == 1:
+        return returner[0]
+
+    return returner

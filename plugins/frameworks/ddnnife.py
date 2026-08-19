@@ -6,6 +6,7 @@ from tempfile import NamedTemporaryFile
 from formats import CNF
 
 import config as CONFIG
+from frameworks import D4
 from util.plugins import ArchiveDependency, Executable, Install, Installable
 from util.runner import via_subprocess
 
@@ -13,9 +14,7 @@ STUB = "ddnnife"
 FULL = "DDNNIFE"
 
 EXE_NAME = "ddnnife"
-URL_D4 = (
-    "https://github.com/SoftVarE-Group/d4v2/releases/download/2.3.2/d4-x86_64-linux.zip"
-)
+
 URL_DDNNIFE = "https://github.com/SoftVarE-Group/d-dnnf-reasoner/releases/download/0.10.0/ddnnife-x86_64-linux.zip"
 
 REP_COUNT = re.compile(r"(?P<count>\d+)")
@@ -27,18 +26,6 @@ class DDNNIFE(Installable, Executable):
     @classmethod
     def plain(cls, args):
         cls.run_ddnnife(cmd=args, rc=None, debug=True)
-
-    @classmethod
-    def run_d4(cls, file_in, file_out, **kwargs):
-
-        exe = path.join(CONFIG.TOOLS_DIR, STUB, "d4")
-        lib = path.abspath(path.join(CONFIG.CACHE_DIR, "d4", "lib"))
-
-        return via_subprocess(
-            f"{exe} --input {file_in} --method ddnnf-compiler --dump-ddnnf {file_out}",
-            env=dict(LD_LIBRARY_PATH=lib),
-            **kwargs,
-        )
 
     @classmethod
     def run_ddnnife(
@@ -54,7 +41,7 @@ class DDNNIFE(Installable, Executable):
 
         with NamedTemporaryFile(suffix=".nnf") as ntf:
             if file_in and not file_in.endswith(".nnf"):
-                call1 = cls.cnf2ddnnf(file_in, file_nnf=ntf.name, **kwargs)
+                call1 = D4.cnf2ddnnf(file_in, file_nnf=ntf.name, **kwargs)
                 file_tmp = ntf.name
             else:
                 call1 = None
@@ -76,11 +63,8 @@ class DDNNIFE(Installable, Executable):
 
         return call
 
-    @classmethod
-    def cnf2ddnnf(cls, file_in, file_nnf=None, **kwargs):
-        return cls.run_d4(file_in, file_nnf, **kwargs)
-
     # Uniform Sampling
+
 
     @classmethod
     def _sample_uniform(cls, file_in, file_out, size, seed=None, **kwargs):
@@ -182,14 +166,11 @@ class DDNNIFE(Installable, Executable):
         """
 
         src_dir = path.join(CONFIG.CACHE_DIR, STUB, "bin")
-        src_dir_d4 = path.join(CONFIG.CACHE_DIR, "d4", "bin")
         exe_dir = path.join(CONFIG.TOOLS_DIR, STUB)
 
         makedirs(exe_dir, exist_ok=True)
 
         shutil.copy2(path.join(src_dir, EXE_NAME), exe_dir)
-        shutil.copy2(path.join(src_dir_d4, "d4"), exe_dir)
-        chmod(path.join(exe_dir, "d4"), 0o0777)
         chmod(path.join(exe_dir, EXE_NAME), 0o0777)
 
     @classmethod
@@ -218,13 +199,7 @@ class DDNNIFE(Installable, Executable):
                     archive="ddnnife.zip",
                     url=URL_DDNNIFE,
                     md5="e230e4cb5ca775b6030043360f6714a8",
-                ),
-                ArchiveDependency(
-                    target="d4",
-                    archive="d4.zip",
-                    url=URL_D4,
-                    md5="ecfcde093be7f26382039dafeba6af3d",
-                ),
+                )
             ],
             cls=cls,
         )
