@@ -65,6 +65,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
         timeout_dimagic: int = None,
         timeout_oxidd: int = None,
         soft=False,
+        threads = 1,
         **kwargs,
     ):
 
@@ -73,7 +74,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
                 call_dimagic = Dimagic.run(
                     file_in,
                     file_out=file_nnf.name,
-                    cmd="-p -o -v remince -c remince",
+                    cmd=f"-p -o -v remince -c remince --threads {threads}",
                     for_oxidd=True,
                     timeout=timeout_dimagic,
                 )

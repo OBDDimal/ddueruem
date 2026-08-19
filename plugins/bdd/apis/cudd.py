@@ -16,7 +16,7 @@ from os import makedirs, path
 import preprocessing
 from climplicit import command
 from formats import CNF
-from svo.heuristics import Force, ForceXG
+from svo.heuristics import ForceXG, DetForce, ForceBest, ForceBest, Force, Mince, ReMince
 
 import config as CONFIG
 from util.benchmarking import tic, toc
@@ -24,9 +24,15 @@ from util.cli import cli, formatting
 from util.plugins import ArchiveDependency, Install, Installable, ToolDependency
 from util.runner import via_subprocess
 
+from svo import svo
 from ..bdd import BDD
 
+from preprocessing import PMC
+
 SO_LOCATION = path.join(CONFIG.TOOLS_DIR, "cudd", "libcudd.so")
+
+import random
+from collections import defaultdict
 
 # -----------------------------------------------------------------------------
 # CUDD Structs
@@ -86,7 +92,6 @@ class CUDD(BDD, Installable):
         no_dvo_control=False,
         no_xor=False,
         progress=False,
-        intermediate_exports=0,
         complement_edges=False,
         save_varnames=False,
     ):
@@ -110,7 +115,46 @@ class CUDD(BDD, Installable):
                 )
 
             if len(xor_groups_raw) < 20 or no_xor:
-                order = Force.run(cnf, order=[])
+
+                cnf_pmc = PMC.run(cnf)
+                cnf2, old2new = preprocessing.simplify_atomic_sets(cnf_pmc, yield_old2new = True)
+
+                if set(old2new.keys()) == set(old2new.values()):
+
+                    # Mince even with "bad" seed outperforms Force almost everytime
+                    order = Mince.run(cnf, seed = 42)
+                    limit = 1 << 17
+                    dvo = "win3c"
+                else:
+                    cnf = cnf_pmc
+                    # Mince even with "bad" seed outperforms Force almost everytime
+                    order = Mince.run(cnf2, seed = 42)
+
+                    new2old = defaultdict(list)
+
+                    for k, v in old2new.items():
+                        new2old[v].append(k)
+
+                    _order = sum([new2old[x] for x in order], [])
+                    for k, v in new2old.items():
+                        if len(v) == 1:
+                            continue
+                        new2old[k] = Force.run(cnf, order = _order, only = v)
+
+                    order = sum([new2old[x] for x in order], [])
+                    order2 = Force.run(cnf, order = order) 
+
+                    if (span2 := svo.compute_span(cnf.clauses, order2)) < (span1 := svo.compute_span(cnf.clauses, order)):
+                        order = order2
+
+                    order2 = Mince.run(cnf, seed = 42)
+                    if (span2 := svo.compute_span(cnf.clauses, order2)) < (span1 := svo.compute_span(cnf.clauses, order)):
+                        order = order2
+
+                    limit = 1 << 19
+                    # win3c is slightly faster (10% at most) but produces larger BDDs
+                    dvo = "win4c"
+
             else:
                 order = ForceXG.run(
                     cnf,
@@ -120,10 +164,13 @@ class CUDD(BDD, Installable):
                     clauses_rem=clauses_rem,
                     use_rank=True,
                 )
+                limit = 1 << 17
+                dvo = "win3c"
+
             time_pre = toc()
 
             tic()
-            with CUDD(order=order, dvo=dvo) as mgr:
+            with CUDD(order=order, dvo = dvo, dvo_limit = limit) as mgr:
 
                 if len(xor_groups) < 20 or no_xor:
                     bdd, meta = mgr.compile_cnf(
@@ -131,7 +178,6 @@ class CUDD(BDD, Installable):
                         dvo_control=not no_dvo_control,
                         dco=no_dvo_control,
                         progress=progress,
-                        intermediate_exports=intermediate_exports,
                         soft_timeout=soft if soft else 0,
                     )
                 else:
@@ -141,7 +187,6 @@ class CUDD(BDD, Installable):
                         dvo_control=not no_dvo_control,
                         dco=no_dvo_control,
                         progress=progress,
-                        intermediate_exports=intermediate_exports,
                         soft_timeout=soft if soft else 0,
                     )
 
@@ -175,7 +220,6 @@ class CUDD(BDD, Installable):
                     dvo_control=not no_dvo_control,
                     dco=no_dvo_control,
                     progress=progress,
-                    intermediate_exports=intermediate_exports,
                     soft_timeout=soft if soft else 0,
                 )
 
@@ -202,13 +246,6 @@ class CUDD(BDD, Installable):
                 "of",
                 formatting.h(meta.get("of_clauses")),
                 "clauses",
-            )
-
-        if intermediate_exports > 0:
-            cli.warn(
-                "Due to",
-                formatting.h(f"intermediate_export = {intermediate_exports} > 0"),
-                "compilation time may be significantly slowed down!",
             )
 
         return dict(

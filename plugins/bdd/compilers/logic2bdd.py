@@ -1,18 +1,24 @@
-from os import path, makedirs
-from util.plugins import Executable, Installable, Install, ToolDependency, LibraryDependency, GitDependency
-import subprocess
 import re
 import shutil
+import subprocess
 import tempfile
-import config as CONFIG
-
-from util.runner import via_subprocess
-
-from .compiler import BDD_Compiler
+from os import makedirs, path
 
 from climplicit import command
 from formats import CNF
 
+import config as CONFIG
+from util.plugins import (
+    Executable,
+    GitDependency,
+    Install,
+    Installable,
+    LibraryDependency,
+    ToolDependency,
+)
+from util.runner import via_subprocess
+
+from .compiler import BDD_Compiler
 
 dvo2name = {
     "off": "CUDD_REORDER_SAME",
