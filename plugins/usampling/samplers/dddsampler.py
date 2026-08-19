@@ -8,12 +8,7 @@ from tempfile import NamedTemporaryFile
 from bdd.compilers import CUDD
 
 import config as CONFIG
-from util.plugins import (
-    Executable,
-    Install,
-    Installable,
-    HttpDependency
-)
+from util.plugins import Executable, HttpDependency, Install, Installable
 from util.runner import via_subprocess
 
 from ..usampler import USampler
