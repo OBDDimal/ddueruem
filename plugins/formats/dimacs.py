@@ -1,7 +1,6 @@
 import re
-from tempfile import NamedTemporaryFile
-
 import string
+from tempfile import NamedTemporaryFile
 
 from pysat.formula import CNF as PySAT_CNF
 

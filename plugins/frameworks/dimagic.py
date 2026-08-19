@@ -39,7 +39,7 @@ class Dimagic(Installable, Executable):
             file_in = path.abspath(file_in)
             file_tmp = file.name
 
-            call_cmd = f"{path.join(exe_path, STUB)} {cmd}  --var-kahypar-preset kahypar.ini --clause-kahypar-preset kahypar.ini {file_in} {file_tmp}"
+            call_cmd = f"{path.join(exe_path, STUB)} {cmd} --var-kahypar-preset kahypar.ini --clause-kahypar-preset kahypar.ini {file_in} {file_tmp}"
 
             call = via_subprocess(
                 call_cmd,

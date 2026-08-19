@@ -1,9 +1,7 @@
+import preprocessing
 from bdd import BDD
 from bdd.compilers import CUDD, OxiDD
-
 from formats import CNF  # Enhanced PySAT CNF
-
-import preprocessing
 from svo.heuristics import DetForce
 
 filepath = "__examples/automotive01.dimacs"
