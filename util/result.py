@@ -10,6 +10,12 @@ class Result:
         if meta is None:
             meta = kwargs
 
+        if meta:
+            for k, v in list(meta.items()):
+                if v is None:
+                    meta.pop(k)
+
+
         self._meta = meta if meta else {}
         self._success = False
         self._timeouted = False
@@ -125,7 +131,7 @@ class BDDResult(Result):
         if self.success:
             cli.say(
                 formatting.check(),
-                f'{self.time_split}, Size: {self.meta.get("size"):,} nodes',
+                f'{self.time_split}, Size: {self.meta.get("size", 0):,} nodes',
             )
         elif self.timeouted:
             cli.say(

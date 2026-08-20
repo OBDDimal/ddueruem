@@ -8,7 +8,7 @@ from frameworks import Dimagic
 
 import config as CONFIG
 from util.cli import cli
-from util.plugins import Install, Installable, ToolDependency
+from util.plugins import Executable, Install, Installable, ToolDependency
 from util.runner import via_subprocess
 
 from .compiler import BDD_Compiler
@@ -17,27 +17,17 @@ STUB = "oxidd"
 EXE_NAME = "oxidd-cli"
 
 
-class OxiDD(BDD_Compiler, Installable):
+class OxiDD(BDD_Compiler, Installable, Executable):
+
+    @classmethod
+    def plain(cls, args):
+
+        exe_path = path.join(CONFIG.TOOLS_DIR, STUB, EXE_NAME)
+        return via_subprocess(f"{exe_path} {args}", rc = None, debug = True)
 
     @classmethod
     def format_dddmp(cls, file):
-        """Reintroduce auxid for compatibility to BDDSampler / CUDD"""
-        with open(file) as fp:
-            lines = fp.readlines()
-
-        for i, line in enumerate(lines):
-
-            if re.match(r"^\d", line):
-
-                node_id, var, high, low = re.split(r"\s+", line.strip())
-                lines[i] = (
-                    f"{node_id} {var} {var if var not in ["F", "T"] else 1} {high} {low}\n"
-                )
-
-        lines = [line for line in lines if line is not None]
-
-        with open(file, "w+") as fp:
-            fp.writelines(lines)
+        pass
 
     @classmethod
     @command(
@@ -59,6 +49,7 @@ class OxiDD(BDD_Compiler, Installable):
         timeout_dimagic: int = None,
         timeout_oxidd: int = None,
         soft=False,
+        threads = 1,
         **kwargs,
     ):
 
@@ -67,7 +58,7 @@ class OxiDD(BDD_Compiler, Installable):
                 call_dimagic = Dimagic.run(
                     file_in,
                     file_out=file_nnf.name,
-                    cmd="-p -o -v remince -c remince",
+                    cmd=f"-p -o -v remince -c remince --threads {threads}",
                     for_oxidd=True,
                     timeout=timeout_dimagic,
                 )

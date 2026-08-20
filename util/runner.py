@@ -236,6 +236,7 @@ class Call:
         times=None,
         timed_out=False,
         error=None,
+        meta = None
     ):
         self.returncode = returncode
         self.stdout = stdout
@@ -243,6 +244,7 @@ class Call:
         self.times = times
         self.timed_out = timed_out
         self.error = error
+        self.meta = {}
 
     def add_time(self, name, time):
         if time:

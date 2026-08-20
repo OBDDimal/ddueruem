@@ -1,14 +1,11 @@
-import pytest
-
-from bdd import BDD
-from bdd.compilers import CUDD
-
-from formats import CNF
+from tempfile import NamedTemporaryFile
 
 import preprocessing
+import pytest
+from bdd import BDD
+from bdd.compilers import CUDD
+from formats import CNF
 from svo.heuristics import Force, ForceXG
-
-from tempfile import NamedTemporaryFile
 
 
 def test_cudd_install():
@@ -42,13 +39,23 @@ def test_complex_bdd_compilation(data):
 
     filepath, expected_ssat = data
 
-    with NamedTemporaryFile(suffix=".dddmp") as file:
-        CUDD.compile(filepath, file_out=file.name, best=True)
-        bdd = BDD(from_file=file.name)
+    for complement_edges in [False, True]:
 
-        model_counts = bdd.count_models()
+        with NamedTemporaryFile(suffix=".dddmp") as file:
+            CUDD.compile(filepath, file_out=file.name, complement_edges = complement_edges, best=True)
+            bdd = BDD(from_file=file.name)
 
-        assert model_counts == expected_ssat
+            model_counts = bdd.count_models()
+            assert model_counts == expected_ssat
+
+            cardinalities = bdd.compute_cardinalities()
+            assert max(cardinalities.values()) == expected_ssat
+
+            sample = bdd.sample_uniform()
+
+            for config in sample:
+                assert bdd.verify(config)
+
 
 
 @pytest.mark.depends(on=["test_cudd_install"])

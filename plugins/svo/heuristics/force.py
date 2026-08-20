@@ -1,9 +1,9 @@
 import preprocessing
 from formats import CNF
-from frameworks import Dimagic
 
 from svo import SVO, svo
-from svo.heuristics import Random, Rank
+from .misc import Random, Rank
+from .dimagic import Mince
 
 
 def compute_cog(clause, var2index):
@@ -117,7 +117,7 @@ class ForceXG(SVO):
 
         if use_mince:
             cnf = CNF(from_clauses=clauses_rem)
-            order = Dimagic.run(cnf, cmd="-c remince -v remince")
+            order = Mince.run(cnf)
 
         else:
             order = []
@@ -155,7 +155,7 @@ class ForceXG(SVO):
             cnf = CNF(from_clauses=pseudo_clauses)
             cnf.nv = len(set(var2group.values()))
 
-            order = Dimagic.run(cnf, cmd="-c remince -v remince")
+            order = Mince.run(cnf)
 
         else:
             order = []
@@ -195,11 +195,24 @@ class ForceBest(SVO):
         order_best = None
         span_best = None
 
+            
+        spans = []
         for i in range(n):
-            print(i)
-            order = Force.run(cnf, *args, **kwargs)
+
+            if i >= 5 and sum(spans) / len(spans) > 1.05 * span_best:
+                print("break")
+                break
+
+            if i == 0:
+                order = DetForce.run(cnf)
+            else:
+                order = Force.run(cnf, *args, **kwargs)
+
             span = svo.compute_span(cnf.clauses, order)
 
+            spans.append(span)
+
+            print(span, span_best)
             if order_best is None or span < span_best:
                 order_best = order
                 span_best = span

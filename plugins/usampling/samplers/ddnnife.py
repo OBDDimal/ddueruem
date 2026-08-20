@@ -1,4 +1,4 @@
-from frameworks import DDNNIFE_base
+from frameworks import DDNNIFE as DDNNIFE_base
 
 from ..usampler import USampler
 

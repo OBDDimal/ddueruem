@@ -310,10 +310,11 @@ class BDD(BDD_API):
 
             if self.dvo == self.dvo.OFF:
                 self.dvo = self.dvo.get(self.dvo_selected)
+                # self.reorder(minsize = limit, dvo = "siftc")
 
-            if limit <= 1 << 22:  # 4M
+            if limit <= 1 << 20:  # 2M
                 self.reorder(minsize=limit // 4, dvo=self.dvo)
-            elif limit <= 1 << 24:  # 16M
+            elif limit <= 1 << 21:  # 4M
                 self.reorder(minsize=limit, dvo=self.dvo)
             else:
                 dvo_control = False

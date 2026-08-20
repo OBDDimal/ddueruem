@@ -14,6 +14,7 @@ from util.plugins import (
     GitDependency,
     Install,
     Installable,
+    LibraryDependency,
     ToolDependency,
 )
 from util.runner import via_subprocess
@@ -38,7 +39,7 @@ class Dimagic(Installable, Executable):
             file_in = path.abspath(file_in)
             file_tmp = file.name
 
-            call_cmd = f"{path.join(exe_path, STUB)} {cmd}  --var-kahypar-preset kahypar.ini --clause-kahypar-preset kahypar.ini {file_in} {file_tmp}"
+            call_cmd = f"{path.join(exe_path, STUB)} {cmd} --var-kahypar-preset kahypar.ini --clause-kahypar-preset kahypar.ini {file_in} {file_tmp}"
 
             call = via_subprocess(
                 call_cmd,
@@ -80,10 +81,17 @@ class Dimagic(Installable, Executable):
         build_path_dimagic = path.join(CONFIG.CACHE_DIR, STUB)
 
         # Important: Disable Testing to save plenty of time
-        via_subprocess(
+        call_kahypar = via_subprocess(
             "cmake .. -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=RELEASE",
             cwd=build_path_kahypar,
+            rc = None
         )
+
+        if call_kahypar.returncode != 0:
+            if "Could NOT find Boost" in call_kahypar.stderr:
+                cli.warn("Boost is not installed on your system, aborting installation.")
+                return False
+
         via_subprocess("make", cwd=build_path_kahypar)
 
         shutil.copy2(

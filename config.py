@@ -1,6 +1,9 @@
-from os import path, makedirs
+from os import makedirs, path
+from pathlib import Path
 
-WORKING_DIR = path.abspath(path.join("_cache"))
+# Fixme: Better ideas?
+
+WORKING_DIR = path.abspath("_cache")
 CACHE_DIR = path.join(WORKING_DIR, "cache")
 RESULTS_DIR = path.join(WORKING_DIR, "out")
 TOOLS_DIR = path.join(WORKING_DIR, "tools")

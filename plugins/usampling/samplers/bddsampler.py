@@ -81,10 +81,10 @@ class BDDSampler(USampler, Installable, Executable):
                     tmpfile,
                     complement_edges=True,
                     save_varnames=True,
-                    best=True,
+                    best=True
                 )
 
-                kc_time = out.time_total
+                kc_time = out.meta["times"]["time_kc"]
 
                 if not out.success:
                     if out.timeouted:
@@ -164,7 +164,12 @@ class BDDSampler(USampler, Installable, Executable):
 
                 lines[i] = f".varnames {' '.join(varnames)}\n{line}"
 
-                break
+            if re.match(r"^\d+", line):
+
+                node_id, var, high, low = re.split(r"\s+", line.strip())
+                lines[i] = (
+                    f"{node_id} {var} {var if var not in ["F", "T"] else 1} {high} {low}\n"
+                )
 
         lines = [line for line in lines if line is not None]
 

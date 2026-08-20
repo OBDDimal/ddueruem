@@ -1,4 +1,5 @@
 import re
+import string
 from tempfile import NamedTemporaryFile
 
 from pysat.formula import CNF as PySAT_CNF
@@ -245,6 +246,49 @@ class CNF(PySAT_CNF):
         return cnf, xor_groups, xor_groups_raw_new, old2new
 
 
+    def to_sxfm(self, file_out):
+        def safename(name):
+            SAFE_CHARS = set(string.ascii_letters + string.digits + "_")
+            return f'"{name}"' if any(char not in SAFE_CHARS for char in name) else name
+
+        features = self.var2names
+
+        root_id = 1
+        for clause in self.clauses:
+            if len(clause) == 1:
+                root_id = abs(clause[0])        
+
+        root_name = features[root_id]
+        child_ids = [vid for vid in sorted(features) if vid != root_id]
+
+        lines = []
+        lines.append('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
+        lines.append('<feature_model name="foo">')
+        lines.append("<feature_tree>")
+        lines.append(f":r {safename(root_name)} ({safename(root_name)})")
+        for var_id in child_ids:
+            name = features[var_id]
+            lines.append(f"\t:o {safename(name)} ({safename(name)})")
+        lines.append("</feature_tree>")
+
+        lines.append("<constraints>")
+        index = 1
+        for clause in self.clauses:
+            if len(clause) == 1 and abs(clause[0]) == root_id:
+                continue  # already encoded as the root feature
+            terms = []
+            for lit in clause:
+                name = safename(features[abs(lit)])
+                terms.append(f"~{name}" if lit < 0 else name)
+            lines.append(f"\tC{index}: {' or '.join(terms)}")
+            index += 1
+        lines.append("</constraints>")
+        lines.append("</feature_model>")
+
+        with open(file_out, "w+") as fp:
+            fp.write("\n".join(lines))
+
+
 def ensure_CNF2File(f, name="file_in"):
     def wrapper(*args, **kwargs):
         if isinstance(args[0], type):
@@ -299,3 +343,5 @@ def ensure_File2CNF(f):
         return f(*args, **kwargs)
 
     return wrapper
+
+

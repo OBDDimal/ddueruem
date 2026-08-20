@@ -1,7 +1,6 @@
-import pytest
-
 from tempfile import NamedTemporaryFile
 
+import pytest
 from usampling import USampler
 
 

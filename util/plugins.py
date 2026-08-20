@@ -21,9 +21,10 @@ class Extendable:
 
     _default = None
     _libraries = None
+    _synonyms = None
 
     @classmethod
-    def register_plugin(cls, plugin, set_default=False):
+    def register_plugin(cls, plugin, *synonyms, set_default=False):
 
         # Ensure that the plug-in is a subclass
 
@@ -37,7 +38,13 @@ class Extendable:
         if cls._libraries is None:
             cls._libraries = dict()
 
+        if cls._synonyms is None:
+            cls._synonyms = dict()
+
         cls._libraries[name] = plugin
+
+        for syn in synonyms:
+            cls._synonyms[syn] = plugin
 
         if set_default:
             if cls._default is not None:
@@ -55,11 +62,11 @@ class Extendable:
 
     @classmethod
     def get_plugin(cls, stub):
-        return cls._libraries.get(stub.lower())
+        return cls._libraries.get(stub.lower(), cls._synonyms.get(stub.lower()))
 
     @classmethod
     def get_plugin_stubs(cls):
-        return sorted([f"{y.__name__}" for x, y in cls._libraries.items()])
+        return sorted([f"{x}" for x, y in set(cls._libraries.items()).union(cls._synonyms.items())])
 
     @classmethod
     def get_plugins(cls, check_health=False):
@@ -67,9 +74,10 @@ class Extendable:
 
     @classmethod
     def get_plugins_dict(cls, check_health=False):
+
         return {
-            y.__name__.lower(): y
-            for x, y in cls._libraries.items()
+            x: y
+            for x, y in set(cls._libraries.items()).union(cls._synonyms.items())
             if not check_health or y.check()
         }
 
