@@ -81,7 +81,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
         else:
             gbs = "left-deep"
 
-        cmd = f'{exe_path} {file_in}{f" -e {file_out} --dddmp-ascii" if file_out else ""} -t {"bcdd" if complement_edges else "bdd"} --gate-build-scheme {gbs} --threads 1 -p --read-var-order'
+        cmd = f'{exe_path} {file_in}{f" -e {file_out} --dddmp-ascii" if file_out else ""} -t {"bcdd" if complement_edges else "bdd"} --gate-build-scheme {gbs} --threads 1 -p --read-var-order --durations-as-secs'
 
         call = via_subprocess(cmd, timeout=timeout_oxidd)
 
@@ -105,17 +105,14 @@ class OxiDD(BDD_Compiler, Installable, Executable):
         time_pre = call.times.get("time_pre")
 
         m_export = re.search(
-            r"exported BDD \([^)]+\) in (?P<time>\d+)\s+(?P<unit>\w+)", call.stdout
+            r"exported decision diagram \([^)]+\) in (?P<time>\d+\.\d+)\s+s", call.stdout
         )
         time_export = (
-            float(m_export["time"]) * SCALE[m_export["unit"]] if m_export else None
+            float(m_export["time"])
         )
 
-        # m1 = re.search(r"parsing done within (?P<time>\d+)\s+(?P<unit>\w+)", call.stdout)
-        # m2 = re.search(r"simplified after (?P<time>\d+)\s+(?P<unit>\w+)", call.stdout)
-        # m3 = re.search(r"DD building done within (?P<time>\d+)\s+(?P<unit>\w+)", call.stdout)
-        # m4 = re.search(r"garbage collection took (?P<time>\d+)\s+(?P<unit>\w+)", call.stdout)
-        # m5 = re.search
+        # m3 = re.search(r"DD building done within (?P<time>\d+\.\d+)\s+s", call.stdout)
+        # m4 = re.search(r"garbage collection took (?P<time>\d+\.\d+)\s+s", call.stdout)
 
         # if m1 and m2 and m3 and m4:
         #     time_kc = float(m1["time"]) * SCALE[m1["unit"]] + float(m2["time"]) * SCALE[m2["unit"]] + float(m3["time"]) * SCALE[m3["unit"]] + float(m4["time"]) * SCALE[m4["unit"]]
@@ -137,7 +134,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
 
         with TemporaryDirectory() as workdir:
 
-            via_subprocess(f"cargo install oxidd-cli@0.3.0 --root {workdir}")
+            via_subprocess(f"cargo install oxidd-cli --root {workdir}")
             shutil.copy2(path.join(workdir, "bin", "oxidd-cli"), exe_dir)
 
     @classmethod
