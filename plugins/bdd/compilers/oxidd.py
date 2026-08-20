@@ -23,31 +23,11 @@ class OxiDD(BDD_Compiler, Installable, Executable):
     def plain(cls, args):
 
         exe_path = path.join(CONFIG.TOOLS_DIR, STUB, EXE_NAME)
-        via_subprocess(f"{exe_path} {args}", rc = None, debug = True)
+        return via_subprocess(f"{exe_path} {args}", rc = None, debug = True)
 
     @classmethod
-    def format_dddmp(cls, file, dddmp_auxid = False):
-
-        if not dddmp_auxid:
-            return
-
-        """Reintroduce auxid for compatibility to BDDSampler / CUDD"""
-        with open(file) as fp:
-            lines = fp.readlines()
-
-        for i, line in enumerate(lines):
-
-            if re.match(r"^\d", line):
-
-                node_id, var, high, low = re.split(r"\s+", line.strip())
-                lines[i] = (
-                    f"{node_id} {var} {var if var not in ["F", "T"] else 1} {high} {low}\n"
-                )
-
-        lines = [line for line in lines if line is not None]
-
-        with open(file, "w+") as fp:
-            fp.writelines(lines)
+    def format_dddmp(cls, file):
+        pass
 
     @classmethod
     @command(

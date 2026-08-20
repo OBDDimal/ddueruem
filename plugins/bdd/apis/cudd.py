@@ -11,8 +11,8 @@ from ctypes import (
     c_ulong,
     c_void_p,
 )
-from os import makedirs, path
-
+from os import makedirs, path, linesep
+import re
 import preprocessing
 from climplicit import command
 from formats import CNF
@@ -253,8 +253,23 @@ class CUDD(BDD, Installable):
         )
 
     @classmethod
-    def format_dddmp(cls, _):
-        pass
+    def format_dddmp(cls, file, dddmp_auxid = False):
+
+        """Reintroduce auxid for compatibility to BDDSampler / CUDD"""
+        with open(file) as fp:
+            lines = fp.readlines()
+
+        for i, line in enumerate(lines):
+
+            if re.match(r"^\.add", line):
+                lines[i] = None
+                break
+
+        lines = [line for line in lines if line is not None]
+
+        with open(file, "w+") as fp:
+            fp.writelines(lines)
+
 
     @classmethod
     def supports_soft_timeout(cls):
@@ -730,7 +745,7 @@ class CUDD(BDD, Installable):
                 varnames,
                 None,
                 c_int(65),
-                1,
+                4 if varnames is not None else 1,
                 c_char_p(filename.encode("utf-8")),
                 None,
             )
@@ -751,7 +766,7 @@ class CUDD(BDD, Installable):
                 varnames,
                 None,
                 c_int(65),
-                1,
+                4 if varnames is not None else 1,
                 c_char_p(filename.encode("utf-8")),
                 None,
             )

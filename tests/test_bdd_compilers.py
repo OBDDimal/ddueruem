@@ -2,7 +2,7 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 from bdd import BDD, BDD_Compiler
-
+from bdd.compilers import OxiDD
 
 @pytest.mark.parametrize("compiler", BDD_Compiler.get_plugins())
 def test_install(compiler):
@@ -46,7 +46,13 @@ def test_complex_bdd_compilation(data, compiler):
     filepath, expected_ssat = data
 
     with NamedTemporaryFile(suffix=".dddmp") as file:
-        compiler.compile(filepath, file_out=file.name, best=True)
+        compiler.compile(filepath, file_out=file.name, best=True, save_varnames = True)
         bdd = BDD(from_file=file.name)
 
         assert bdd.count_models() == expected_ssat
+
+        call = OxiDD.plain(f"-i {file.name}")
+
+        if compiler.__name__.lower() != "logic2bdd":
+            # logic2bdd produces dddmp-3.0
+            assert call.returncode == 0

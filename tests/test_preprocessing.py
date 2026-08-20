@@ -4,7 +4,7 @@ import preprocessing
 import pytest
 from counting import Counter
 from formats import CNF
-from frameworks import DDNNIFE_base as DDNNIFE
+from frameworks import DDNNIFE
 from frameworks import FeatJar
 from preprocessing import PMC, Arjun
 
@@ -116,7 +116,6 @@ def test_featjar_install():
     assert FeatJar.check()
 
 
-# @pytest.mark.skip(reason="Computation of atomic sets is currently broken in FeatJar https://github.com/FeatureIDE/FeatJAR-formula-analysis-sat4j/issues/5#issuecomment-2981753979")
 @pytest.mark.depends(on=["test_featjar_install", "test_atomic_set_detection"])
 @pytest.mark.parametrize(
     "file_test",
