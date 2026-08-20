@@ -108,7 +108,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
             r"exported decision diagram \([^)]+\) in (?P<time>\d+\.\d+)\s+s", call.stdout
         )
         time_export = (
-            float(m_export["time"])
+            float(m_export["time"]) if m_export else None
         )
 
         # m3 = re.search(r"DD building done within (?P<time>\d+\.\d+)\s+s", call.stdout)
@@ -134,7 +134,7 @@ class OxiDD(BDD_Compiler, Installable, Executable):
 
         with TemporaryDirectory() as workdir:
 
-            via_subprocess(f"cargo install oxidd-cli --root {workdir}")
+            via_subprocess(f"cargo install oxidd-cli@0.5.0 --root {workdir}")
             shutil.copy2(path.join(workdir, "bin", "oxidd-cli"), exe_dir)
 
     @classmethod
