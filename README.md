@@ -27,12 +27,17 @@ Furthermore, _ddueruem_ exposes a unified API for these categories (and also Mod
 * [CNF2OBDD](https://www.disc.lab.uec.ac.jp/toda/code/cnf2obdd.html)
 * [OxiDD](https://github.com/oxidd/oxidd)
 
+### d-DNNF Compilation
+
+* [d4](https://github.com/SoftVarE-Group/d4v2)
+
 ### Uniform Sampling (`plugins/usample`)
 
 * [BDDSampler](https://github.com/davidfa71/BDDSampler)
 * [CMSGen](https://github.com/meelgroup/cmsgen)
 * [DivKC](https://github.com/serval-uni-lu/divkc)
 * ddnnife (see [Frameworks](#frameworks))
+* [decdnnf_rs](https://github.com/crillab/decdnnf_rs)
 * [KUS](https://github.com/meelgroup/KUS)
 * [Quicksampler](https://github.com/OBDDimal/quicksampler)
 * [Smarch](https://github.com/jeho-oh/Smarch)
@@ -54,6 +59,11 @@ See  `plugin/frameworks`:
 
 * [ddnnife](https://github.com/SoftVarE-Group/d-dnnf-reasoner)
 * [FeatJAR](https://github.com/FeatureIDE/FeatJAR)
+
+### Misc
+See  `plugin/misc`:
+
+* [uvl2dimacs](https://github.com/rheradio/uvl2dimacs)
 
 ## Setup
 
@@ -95,3 +105,13 @@ Please cite our [work from SPLC'22](https://dl.acm.org/doi/abs/10.1145/3503229.3
     series = {SPLC '22}
 }
 ```
+
+# Changelog
+
+### v0.9.1
+* Enhanced CLI
+* Added explicit support for d4
+* Added support for decdnnf_rs, uvl2dimacs
+* Improved BDD Compilation with CUDD
+* Homogenized dddmp exporting
+* Many bug fixes

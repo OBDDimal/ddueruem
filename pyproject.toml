@@ -17,6 +17,9 @@ dependencies = [
   "uvllang"
 ]
 
+[tool.hatch.build]
+exclude = ["_cache", "_cache/**", "**/_cache", "**/_cache/**"]
+
 [tool.hatch.build.targets.wheel]
 sources = ["plugins"]
 packages = [
@@ -24,6 +27,7 @@ packages = [
   "plugins/counting",
   "plugins/formats",
   "plugins/frameworks",
+  "plugins/misc",
   "plugins/preprocessing",
   "plugins/svo",
   "plugins/tsampling",

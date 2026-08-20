@@ -253,9 +253,7 @@ class CUDD(BDD, Installable):
         )
 
     @classmethod
-    def format_dddmp(cls, file, dddmp_auxid = False):
-
-        """Reintroduce auxid for compatibility to BDDSampler / CUDD"""
+    def format_dddmp(cls, file):
         with open(file) as fp:
             lines = fp.readlines()
 

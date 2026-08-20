@@ -66,6 +66,9 @@ class D4(Installable, Executable):
         exe = path.join(CONFIG.TOOLS_DIR, STUB, "d4")
         lib = path.abspath(path.join(CONFIG.CACHE_DIR, "d4", "lib"))
 
+        if not path.exists(exe):
+            return False
+
         call = via_subprocess(
             f"{exe}",
             env=dict(LD_LIBRARY_PATH=lib),
